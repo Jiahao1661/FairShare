@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Bill History | FairShare{% endblock %}
+{% block content %}
+    <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+            <p class="text-pink-300">{{ house['house_emoji'] }} {{ house['house_name'] }}</p>
+            <h1 class="text-4xl font-semibold">Bill History</h1>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a
+                href="{{ url_for('export_house_pdf', house_id=house['id']) }}"
+                class="rounded-xl bg-red-500 px-4 py-3 font-semibold"
+            >
+                PDF Report
+            </a>
+
+            <a
+                href="{{ url_for('export_house_excel', house_id=house['id']) }}"
+                class="rounded-xl bg-green-400 px-4 py-3 font-semibold text-black"
+            >
+                Excel Report
+            </a>
+
+            <a
+                href="{{ url_for('add_bill', house_id=house['id']) }}"
+                class="rounded-xl bg-pink-300 px-5 py-3 font-semibold text-black"
+            >
+                Add Bill
+            </a>
+        </div>
+    </div>
+    <div class="mt-8 space-y-4">
+        {% for bill,status_text,status_color in decorated_bills %}
+            <div class="
+    flex flex-col justify-between gap-5 rounded-2xl border border-white/10
+    bg-white/[0.04] p-6 md:flex-row md:items-center
+">
+                <div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <h2 class="text-xl font-semibold">{{ bill['month'] }}</h2>
+                        <span class="status-{{ status_color }} rounded-full px-3 py-1 text-xs">{{ status_text }}</span>
+                        {% if bill['receipt_filename'] %}<span class="rounded-full bg-purple-500/15 px-3 py-1 text-xs text-purple-200">Receipt attached</span>{% endif %}
+                    </div>
+                    <p class="mt-2 text-sm text-gray-400">{{ bill['split_type']|title }} split ·
+                        Rent RM {{ '%.2f'|format(bill['rent']) }} ·
+                        Expenses RM {{ '%.2f'|format(bill['utilities']) }} ·
+                        Total RM {{ '%.2f'|format(bill['grand_total']) }} ·
+                        Due {{ bill['due_date']|format_due_date }}</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="{{ url_for('split_result', bill_id=bill['id']) }}"
+                       class="rounded-xl bg-pink-300 px-4 py-2 font-medium text-black">View</a><a href="{{ url_for('edit_bill', bill_id=bill['id']) }}"
+   class="rounded-xl border border-white/20 px-4 py-2 font-medium">Edit</a>
+                    <form method="POST"
+                          action="{{ url_for('delete_bill', bill_id=bill['id']) }}"
+                          onsubmit="return confirm('Delete this bill?');">
+                        <button class="rounded-xl bg-red-500 px-4 py-2 font-medium">Delete</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="rounded-2xl border border-dashed border-white/20 p-10 text-center text-gray-400">No bill history yet.</div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('dashboard') }}"
+       class="mt-6 inline-block text-gray-400">Back to Dashboard</a>
+{% endblock %}
