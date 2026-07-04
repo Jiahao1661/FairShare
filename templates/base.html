@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FairShare{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+    {% block head %}{% endblock %}
+</head>
+<body class="app-body min-h-screen text-white">
+    <div class="fixed inset-0 -z-20 app-background"></div>
+    <div class="fixed -left-32 top-8 -z-10 h-96 w-96 rounded-full
+                bg-pink-400/10 blur-3xl"></div>
+    <div class="fixed -right-28 top-36 -z-10 h-96 w-96 rounded-full
+                bg-violet-400/10 blur-3xl"></div>
+
+    <nav class="sticky top-0 z-40 border-b border-white/10 bg-black/65 backdrop-blur-xl">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+            <a href="{{ url_for('home') }}" class="text-3xl font-bold tracking-tight">
+                Fair<span class="text-pink-300">Share</span>
+            </a>
+
+            <div class="flex items-center gap-3">
+                <a
+                    href="{{ url_for('quick_calculator') }}"
+                    class="hidden rounded-xl border border-pink-300/30 px-4 py-2
+                           text-sm text-pink-200 hover:bg-pink-300/10 sm:inline"
+                >
+                    ⚡ Quick Split
+                </a>
+
+                {% if session.get('user_id') %}
+                    <a
+                        href="{{ url_for('dashboard') }}"
+                        class="hidden text-sm text-gray-300 hover:text-white md:inline"
+                    >
+                        Dashboard
+                    </a>
+                    <span class="hidden text-sm text-gray-500 lg:inline">
+                        {{ session.get("username") }}
+                    </span>
+                    <a
+                        href="{{ url_for('logout') }}"
+                        class="rounded-xl bg-red-500 px-4 py-2 text-sm font-medium
+                               hover:bg-red-400"
+                    >
+                        Logout
+                    </a>
+                {% else %}
+                    <a
+                        href="{{ url_for('login') }}"
+                        class="rounded-xl border border-white/20 px-4 py-2 text-sm
+                               font-medium hover:bg-white/5"
+                    >
+                        Login
+                    </a>
+                    <a
+                        href="{{ url_for('register') }}"
+                        class="rounded-xl bg-gradient-to-r from-pink-300 to-violet-400
+                               px-4 py-2 text-sm font-semibold text-black"
+                    >
+                        Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="mx-auto max-w-6xl px-6 py-10">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-6 space-y-3">
+                    {% for category, message in messages %}
+                        <div
+                            class="rounded-xl border px-4 py-3
+                            {{ 'border-green-400/40 bg-green-500/10 text-green-200'
+                               if category == 'success'
+                               else 'border-red-400/40 bg-red-500/10 text-red-200' }}"
+                        >
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

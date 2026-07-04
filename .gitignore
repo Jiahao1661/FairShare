@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+fairshare.db
+.env
+.vscode/
+static/uploads/receipts/*
+!static/uploads/receipts/.gitkeep
+static/uploads/houses/*
+!static/uploads/houses/.gitkeep

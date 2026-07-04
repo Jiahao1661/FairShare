@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}FairShare | House Rental & Bill Splitter{% endblock %}
+{% block content %}
+    <section class="relative overflow-hidden py-14 sm:py-20">
+        <div class="grid items-center gap-14 lg:grid-cols-2">
+            <div>
+                <p class="mb-4 text-sm font-semibold uppercase tracking-[0.32em] text-pink-300">Shared house expense management</p>
+                <h1 class="text-5xl font-light leading-tight tracking-tight sm:text-7xl">
+                    <span class="bg-gradient-to-r from-pink-300 to-violet-400 bg-clip-text text-transparent">Split</span>
+                    shared houses, bills and payments easily.
+                </h1>
+                <p class="mt-7 max-w-xl text-lg leading-relaxed text-gray-300">
+                    Manage shared houses, add housemates, split rent and monthly expenses fairly,
+                    track payment progress and remind unpaid members before the due date.
+                    Suitable for shared-house leaders, small rental managers and students.
+                </p>
+                <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+                    {% if session.get('user_id') %}
+                        <a href="{{ url_for('dashboard') }}"
+                           class="
+    rounded-xl bg-white px-7 py-3 text-center font-semibold text-black
+    hover:opacity-90
+">Open Dashboard</a>
+                    {% else %}
+                        <a href="{{ url_for('register') }}"
+                           class="
+    rounded-xl bg-white px-7 py-3 text-center font-semibold text-black
+    hover:opacity-90
+">Create Account</a>
+                        <a href="{{ url_for('login') }}"
+                           class="
+    rounded-xl border border-white/20 px-7 py-3 text-center font-semibold
+    hover:bg-white/5
+">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="flex justify-center">
+                <div class="
+    hero-orbit relative flex h-80 w-80 items-center justify-center rounded-full
+    border border-pink-300/20 sm:h-[430px] sm:w-[430px]
+">
+                    <div class="absolute inset-5 rounded-full border border-purple-400/20"></div>
+                    <div class="absolute inset-16 rounded-full border border-white/10"></div>
+                    <div class="relative z-10 text-center">
+                        <div class="
+    mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-3xl border
+    border-cyan-300/40 bg-black/40 text-6xl
+    shadow-[0_0_35px_rgba(34,211,238,0.25)]
+">⌂</div>
+                        <p class="text-sm uppercase tracking-[0.28em] text-gray-400">Payment tracking</p>
+                        <p class="mt-2 text-4xl font-light">100%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="my-10 h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+    <section class="py-14">
+        <div class="mb-12 text-center">
+            <h2 class="text-4xl font-light sm:text-5xl">Everything needed to manage shared houses</h2>
+            <p class="mt-4 text-gray-400">A simple workflow for houses, housemates, bills and payments.</p>
+        </div>
+        <div class="grid gap-7 md:grid-cols-3">
+            <article class="glass-card rounded-3xl p-8">
+                <div class="
+    mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-400/10
+    text-2xl
+">%</div>
+                <h3 class="text-2xl font-medium">Smart Bill Split</h3>
+                <p class="mt-4 leading-relaxed text-gray-400">Split rent equally or assign custom percentages based on room size or agreed contributions.</p>
+            </article>
+            <article class="glass-card rounded-3xl p-8">
+                <div class="
+    mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/10
+    text-2xl
+">⌂</div>
+                <h3 class="text-2xl font-medium">House and Member Management</h3>
+                <p class="mt-4 leading-relaxed text-gray-400">Manage one or multiple shared houses and keep housemate information organised.</p>
+            </article>
+            <article class="glass-card rounded-3xl p-8">
+                <div class="
+    mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-500/10
+    text-2xl
+">↺</div>
+                <h3 class="text-2xl font-medium">Payment Tracking & Reminders</h3>
+                <p class="mt-4 leading-relaxed text-gray-400">Track paid and unpaid members, monitor due dates and send automatic reminders.</p>
+            </article>
+        </div>
+    </section>
+{% endblock %}

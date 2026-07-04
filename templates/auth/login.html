@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Login | FairShare{% endblock %}
+{% block content %}
+    <div class="
+    mx-auto max-w-md rounded-3xl border border-white/10 bg-white/[0.04] p-8
+    shadow-2xl backdrop-blur
+">
+        <h1 class="text-3xl font-semibold">Welcome back</h1>
+        <p class="mt-2 text-gray-400">Log in to manage your shared bills.</p>
+        <form method="POST" class="mt-8 space-y-5">
+            <div>
+                <label class="mb-2 block text-sm text-gray-300">Username</label>
+                <input name="username"
+                       required
+                       class="
+    w-full rounded-xl border border-gray-700 bg-black/40 px-4 py-3 outline-none
+    focus:border-pink-300
+">
+            </div>
+            <div>
+                <label class="mb-2 block text-sm text-gray-300">Password</label>
+                <input type="password"
+                       name="password"
+                       required
+                       class="
+    w-full rounded-xl border border-gray-700 bg-black/40 px-4 py-3 outline-none
+    focus:border-purple-400
+">
+            </div>
+            <button class="
+    w-full rounded-xl bg-gradient-to-r from-pink-300 to-violet-400 py-3
+    font-semibold text-black
+">Login</button>
+        </form>
+        <p class="mt-6 text-center text-gray-400">No account? <a class="text-pink-300" href="{{ url_for('register') }}">Register</a></p>
+    </div>
+{% endblock %}

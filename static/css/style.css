@@ -1,0 +1,288 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.app-body {
+    background: #0b0712;
+}
+
+.app-background {
+    background:
+        radial-gradient(circle at 14% 10%, rgba(249, 168, 212, 0.16), transparent 32%),
+        radial-gradient(circle at 86% 18%, rgba(167, 139, 250, 0.15), transparent 34%),
+        linear-gradient(145deg, #090611 0%, #140b1d 48%, #08101d 100%);
+}
+
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(14px);
+    transition: transform 180ms ease, border-color 180ms ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(249, 168, 212, 0.42);
+}
+
+.hero-orbit {
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(167, 139, 250, 0.15),
+            rgba(34, 211, 238, 0.04) 48%,
+            transparent 70%
+        );
+    box-shadow:
+        0 0 60px rgba(249, 168, 212, 0.16),
+        0 0 100px rgba(168, 85, 247, 0.08);
+}
+
+.dashboard-hero {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background:
+        linear-gradient(105deg, rgba(2, 8, 23, 0.92), rgba(8, 15, 35, 0.7)),
+        radial-gradient(circle at 82% 22%, rgba(249, 168, 212, 0.34), transparent 28%),
+        radial-gradient(circle at 68% 88%, rgba(167, 139, 250, 0.32), transparent 34%),
+        linear-gradient(135deg, #1b0d22, #10172a);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+}
+
+.dashboard-hero::after {
+    content: "⌂";
+    position: absolute;
+    right: 7%;
+    bottom: -28%;
+    font-size: 18rem;
+    color: rgba(255, 255, 255, 0.035);
+    transform: rotate(-8deg);
+    pointer-events: none;
+}
+
+.month-highlight {
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(16px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.stat-card,
+.house-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.stat-card:hover,
+.house-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+}
+
+.stat-cyan {
+    background: linear-gradient(145deg, rgba(249, 168, 212, 0.22), rgba(15, 10, 24, 0.88));
+}
+
+.stat-purple {
+    background: linear-gradient(145deg, rgba(167, 139, 250, 0.22), rgba(15, 10, 24, 0.88));
+}
+
+.stat-green {
+    background: linear-gradient(145deg, rgba(103, 232, 249, 0.18), rgba(15, 10, 24, 0.88));
+}
+
+.stat-orange {
+    background: linear-gradient(145deg, rgba(244, 114, 182, 0.18), rgba(15, 10, 24, 0.88));
+}
+
+.stat-icon {
+    display: flex;
+    width: 3.25rem;
+    height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 1.75rem;
+}
+
+.house-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025));
+}
+
+.info-chip {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.18);
+    padding: 0.35rem 0.65rem;
+}
+
+.action-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.85rem;
+    padding: 0.7rem 0.9rem;
+    font-weight: 600;
+}
+
+.action-purple {
+    background: linear-gradient(90deg, #c084fc, #f9a8d4);
+    color: #190b18;
+}
+
+.action-green {
+    background: linear-gradient(90deg, #67e8f9, #a78bfa);
+    color: #07111a;
+}
+
+.action-dark {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.empty-house-card {
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    background: linear-gradient(145deg, rgba(34, 211, 238, 0.04), rgba(168, 85, 247, 0.04));
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #f9a8d4, #c084fc, #67e8f9);
+    transition: width 450ms ease;
+}
+
+.expense-electricity {
+    background: linear-gradient(145deg, rgba(234, 179, 8, 0.16), rgba(0, 0, 0, 0.2));
+}
+
+.expense-water {
+    background: linear-gradient(145deg, rgba(59, 130, 246, 0.16), rgba(0, 0, 0, 0.2));
+}
+
+.expense-internet {
+    background: linear-gradient(145deg, rgba(139, 92, 246, 0.16), rgba(0, 0, 0, 0.2));
+}
+
+.expense-groceries {
+    background: linear-gradient(145deg, rgba(34, 197, 94, 0.16), rgba(0, 0, 0, 0.2));
+}
+
+.expense-other {
+    background: linear-gradient(145deg, rgba(249, 115, 22, 0.16), rgba(0, 0, 0, 0.2));
+}
+
+.expense-total {
+    background: linear-gradient(145deg, rgba(249, 168, 212, 0.18), rgba(167, 139, 250, 0.12));
+}
+
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main > * {
+    animation: fade-up 420ms ease both;
+}
+
+button,
+a {
+    transition:
+        transform 160ms ease,
+        opacity 160ms ease,
+        background-color 160ms ease;
+}
+
+.house-icon-cyan {
+    background: rgba(34, 211, 238, 0.14);
+}
+
+.house-icon-purple {
+    background: rgba(168, 85, 247, 0.14);
+}
+
+.house-icon-green {
+    background: rgba(34, 197, 94, 0.14);
+}
+
+.house-icon-pink {
+    background: rgba(236, 72, 153, 0.14);
+}
+
+.house-icon-orange {
+    background: rgba(249, 115, 22, 0.14);
+}
+
+.house-cyan:hover {
+    border-color: rgba(34, 211, 238, 0.5);
+}
+
+.house-purple:hover {
+    border-color: rgba(168, 85, 247, 0.5);
+}
+
+.house-green:hover {
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.house-pink:hover {
+    border-color: rgba(236, 72, 153, 0.5);
+}
+
+.house-orange:hover {
+    border-color: rgba(249, 115, 22, 0.5);
+}
+
+.status-green {
+    background: rgba(34, 197, 94, 0.14);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-red {
+    background: rgba(239, 68, 68, 0.14);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-yellow {
+    background: rgba(234, 179, 8, 0.14);
+    color: #fde68a;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.status-blue {
+    background: rgba(59, 130, 246, 0.14);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-gray {
+    background: rgba(107, 114, 128, 0.14);
+    color: #d1d5db;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+
+.primary-pink {
+    background: linear-gradient(90deg, #f9a8d4, #c084fc);
+    color: #1f1020;
+    box-shadow: 0 10px 30px rgba(249, 168, 212, 0.18);
+}
+
+.primary-pink:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+}

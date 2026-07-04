@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | FairShare{% endblock %}
+
+{% block content %}
+<section class="dashboard-hero relative overflow-hidden rounded-[2rem] p-8 md:p-10">
+    <div class="relative z-10 grid items-center gap-8 lg:grid-cols-[1.4fr_0.6fr]">
+        <div>
+            <p class="mb-3 text-sm font-semibold uppercase tracking-[0.28em] text-pink-200">
+                Shared house expense management
+            </p>
+            <h1 class="text-2xl font-bold leading-tight md:text-3xl">
+                <span>Welcome,</span>
+                <span>{{ session.get("username") }}</span>
+                <span>👋</span>
+            </h1>
+            <p class="mt-3 max-w-2xl text-sm leading-relaxed text-gray-300 md:text-base">
+                Manage shared houses, monthly bills, housemates and payment progress in one place.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+                <a
+                    href="{{ url_for('create_house') }}"
+                    class="rounded-xl bg-pink-300 px-5 py-3 font-semibold text-black
+                           hover:scale-105 hover:bg-pink-200"
+                >
+                    ＋ Create House
+                </a>
+                <a
+                    href="{{ url_for('quick_calculator') }}"
+                    class="rounded-xl border border-white/30 bg-black/25 px-5 py-3
+                           font-semibold backdrop-blur hover:bg-white/10"
+                >
+                    ⚡ Quick Split
+                </a>
+            </div>
+        </div>
+
+        <div class="month-highlight rounded-3xl border border-white/15 p-6 text-center">
+            <p class="text-sm uppercase tracking-[0.22em] text-gray-300">
+                This month's expenses
+            </p>
+            <p class="mt-3 text-4xl font-bold text-white">
+                RM {{ '%.2f'|format(current_month_total) }}
+            </p>
+            <p class="mt-2 text-sm text-gray-300">
+                {{ current_month }} recorded across your houses
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="stat-card stat-cyan rounded-3xl p-6">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-gray-300">Total Houses</p>
+                <p class="mt-3 text-4xl font-bold">{{ total_houses }}</p>
+            </div>
+            <div class="stat-icon">🏠</div>
+        </div>
+        <p class="mt-5 text-sm text-pink-200">Shared homes managed</p>
+    </article>
+
+    <article class="stat-card stat-purple rounded-3xl p-6">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-gray-300">Total Recorded Expenses</p>
+                <p class="mt-3 text-3xl font-bold">
+                    RM {{ '%.2f'|format(total_bills) }}
+                </p>
+            </div>
+            <div class="stat-icon">💸</div>
+        </div>
+        <p class="mt-5 text-sm text-purple-200">All recorded bills</p>
+    </article>
+
+    <article class="stat-card stat-green rounded-3xl p-6">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-gray-300">Housemates</p>
+                <p class="mt-3 text-4xl font-bold">{{ total_housemates }}</p>
+            </div>
+            <div class="stat-icon">👥</div>
+        </div>
+        <p class="mt-5 text-sm text-green-200">People sharing expenses</p>
+    </article>
+
+    <article class="stat-card stat-orange rounded-3xl p-6">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm text-gray-300">Outstanding</p>
+                <p class="mt-3 text-4xl font-bold">{{ outstanding_payments }}</p>
+            </div>
+            <div class="stat-icon">⏳</div>
+        </div>
+        <p class="mt-5 text-sm text-orange-200">Unpaid shares remaining</p>
+    </article>
+</section>
+
+<div class="mt-11 flex items-center justify-between gap-4">
+    <div>
+        <p class="text-sm uppercase tracking-[0.2em] text-pink-300">Your spaces</p>
+        <h2 class="mt-1 text-3xl font-semibold">Your Houses</h2>
+    </div>
+</div>
+
+<section class="mt-5 grid gap-6 lg:grid-cols-2">
+    {% for house in houses %}
+        {% set progress = ((house['paid_count'] / house['payment_count']) * 100)|round|int
+            if house['payment_count'] else 0 %}
+        {% set color = house['house_color'] or 'cyan' %}
+
+        <article class="house-card house-{{ color }} rounded-[1.75rem] p-6">
+            <div class="flex flex-col justify-between gap-5 sm:flex-row sm:items-start">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="house-icon house-icon-{{ color }} flex h-16 w-16
+                               shrink-0 items-center justify-center overflow-hidden rounded-2xl text-4xl"
+                    >
+                        {% if house['house_image'] %}
+                            <img
+                                src="{{ url_for('static', filename='uploads/houses/' ~ house['house_image']) }}"
+                                alt="{{ house['house_name'] }}"
+                                class="h-full w-full object-cover"
+                            >
+                        {% else %}
+                            {{ house['house_emoji'] or '🏠' }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold">
+                            {{ house['house_name'] }}
+                        </h3>
+                        <div class="mt-2 flex flex-wrap gap-2 text-xs text-gray-300">
+                            <span class="info-chip">
+                                👥 {{ house['member_count'] }} member(s)
+                            </span>
+                            <span class="info-chip">
+                                💰 RM {{ '%.2f'|format(house['bill_total']) }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <a
+                        href="{{ url_for('edit_house', house_id=house['id']) }}"
+                        class="rounded-lg border border-white/15 px-3 py-2 text-sm
+                               text-gray-200 hover:bg-white/10"
+                    >
+                        ✎ Edit
+                    </a>
+                    <form
+                        method="POST"
+                        action="{{ url_for('delete_house', house_id=house['id']) }}"
+                        onsubmit="return confirm('Delete this house and all related records?');"
+                    >
+                        <button
+                            type="submit"
+                            class="rounded-lg bg-red-500/90 px-3 py-2 text-sm text-white
+                                   hover:bg-red-500"
+                        >
+                            Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-6 rounded-2xl bg-black/20 p-4">
+                <div class="mb-3 flex justify-between text-sm">
+                    <span class="text-gray-300">Payment progress</span>
+                    <span class="font-medium text-white">
+                        {{ house['paid_count'] }}/{{ house['payment_count'] }} ·
+                        {{ progress }}%
+                    </span>
+                </div>
+                <div class="h-3 overflow-hidden rounded-full bg-white/10">
+                    <div
+                        class="progress-fill h-full rounded-full"
+                        style="width: {{ progress }}%;"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                <a
+                    href="{{ url_for('manage_housemates', house_id=house['id']) }}"
+                    class="action-button action-purple"
+                >
+                    👥 Members
+                </a>
+                <a
+                    href="{{ url_for('add_bill', house_id=house['id']) }}"
+                    class="action-button action-green"
+                >
+                    ＋ Add Bill
+                </a>
+                <a
+                    href="{{ url_for('bill_history', house_id=house['id']) }}"
+                    class="action-button action-dark"
+                >
+                    ↺ History
+                </a>
+            </div>
+        </article>
+    {% else %}
+        <div class="empty-house-card rounded-[2rem] p-12 text-center lg:col-span-2">
+            <div class="mb-5 text-6xl">🏘️</div>
+            <h3 class="text-2xl font-semibold">Start your first shared home</h3>
+            <p class="mx-auto mt-3 max-w-md text-gray-400">
+                Create a house, add your housemates and begin splitting monthly
+                expenses fairly.
+            </p>
+            <a
+                href="{{ url_for('create_house') }}"
+                class="mt-6 inline-block rounded-xl bg-pink-300 px-5 py-3
+                       font-semibold text-black hover:bg-pink-200"
+            >
+                Create House
+            </a>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}

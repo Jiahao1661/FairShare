@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}Quick Split Calculator | FairShare{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-2xl rounded-3xl border border-pink-300/20 bg-white/[0.04] p-8">
+    <div class="text-center">
+        <div class="text-5xl">⚡</div>
+        <h1 class="mt-4 text-3xl font-semibold">Quick Split Calculator</h1>
+        <p class="mt-2 text-gray-400">
+            Calculate an equal or percentage-based split without creating a house or saving data.
+        </p>
+    </div>
+
+    <form method="POST" class="mt-8 space-y-6" id="quick-split-form">
+        <div>
+            <label class="mb-2 block text-sm text-gray-300">Total amount (RM)</label>
+            <input
+                type="number"
+                step="0.01"
+                min="0"
+                name="amount"
+                value="{{ request.form.get('amount', '') }}"
+                required
+                class="w-full rounded-xl border border-gray-700 bg-black/40 px-4 py-3"
+            >
+        </div>
+
+        <div>
+            <label class="mb-3 block text-sm text-gray-300">Split method</label>
+            <div class="grid gap-3 sm:grid-cols-2">
+                <label class="cursor-pointer rounded-xl border border-white/10 bg-black/30 p-4 hover:border-pink-300/40">
+                    <input
+                        type="radio"
+                        name="split_method"
+                        value="equal"
+                        class="mr-2"
+                        {% if split_method != 'percentage' %}checked{% endif %}
+                    >
+                    <span class="font-medium">Equal Split</span>
+                    <p class="mt-1 text-xs text-gray-400">Everyone pays the same amount.</p>
+                </label>
+
+                <label class="cursor-pointer rounded-xl border border-white/10 bg-black/30 p-4 hover:border-pink-300/40">
+                    <input
+                        type="radio"
+                        name="split_method"
+                        value="percentage"
+                        class="mr-2"
+                        {% if split_method == 'percentage' %}checked{% endif %}
+                    >
+                    <span class="font-medium">Percentage Split</span>
+                    <p class="mt-1 text-xs text-gray-400">Assign a different percentage to each person.</p>
+                </label>
+            </div>
+        </div>
+
+        <div id="equal-fields">
+            <label class="mb-2 block text-sm text-gray-300">Number of people</label>
+            <input
+                type="number"
+                min="1"
+                name="people"
+                value="{{ request.form.get('people', '') }}"
+                class="w-full rounded-xl border border-gray-700 bg-black/40 px-4 py-3"
+            >
+        </div>
+
+        <div id="percentage-fields" class="hidden space-y-4">
+            <div class="flex items-center justify-between gap-4">
+                <div>
+                    <p class="text-sm font-medium text-gray-200">People and percentages</p>
+                    <p class="mt-1 text-xs text-gray-500">The total must equal 100%.</p>
+                </div>
+                <button
+                    type="button"
+                    id="add-person"
+                    class="rounded-lg border border-pink-300/30 px-3 py-2 text-sm text-pink-200 hover:bg-pink-300/10"
+                >
+                    + Add Person
+                </button>
+            </div>
+
+            <div id="percentage-rows" class="space-y-3"></div>
+
+            <div class="flex items-center justify-between rounded-xl bg-black/25 px-4 py-3 text-sm">
+                <span class="text-gray-300">Total percentage</span>
+                <span id="percentage-total" class="font-semibold text-pink-200">0%</span>
+            </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+            <button
+                type="submit"
+                class="rounded-xl bg-gradient-to-r from-pink-300 to-violet-400 py-3 font-semibold text-black"
+            >
+                Calculate
+            </button>
+            <button
+                type="reset"
+                id="reset-button"
+                class="rounded-xl border border-white/20 py-3 font-semibold hover:bg-white/5"
+            >
+                Reset
+            </button>
+        </div>
+    </form>
+
+    {% if equal_result is not none %}
+        <div class="mt-7 rounded-2xl border border-green-400/30 bg-green-500/10 p-6 text-center">
+            <p class="text-sm text-green-200">Each person pays</p>
+            <p class="mt-2 text-4xl font-semibold text-green-300">
+                RM {{ '%.2f'|format(equal_result) }}
+            </p>
+        </div>
+    {% endif %}
+
+    {% if percentage_results %}
+        <div class="mt-7 rounded-2xl border border-violet-400/30 bg-violet-500/10 p-6">
+            <h2 class="text-center text-xl font-semibold">Percentage Split Result</h2>
+            <div class="mt-5 space-y-3">
+                {% for person in percentage_results %}
+                    <div class="flex items-center justify-between rounded-xl bg-black/25 px-4 py-3">
+                        <div>
+                            <p class="font-medium">{{ person['name'] }}</p>
+                            <p class="text-xs text-gray-400">{{ '%.2f'|format(person['percentage']) }}%</p>
+                        </div>
+                        <p class="text-lg font-semibold text-pink-200">
+                            RM {{ '%.2f'|format(person['amount']) }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const equalFields = document.getElementById("equal-fields");
+    const percentageFields = document.getElementById("percentage-fields");
+    const percentageRows = document.getElementById("percentage-rows");
+    const percentageTotal = document.getElementById("percentage-total");
+    const addPersonButton = document.getElementById("add-person");
+    const resetButton = document.getElementById("reset-button");
+
+    const savedNames = {{ request.form.getlist('person_name[]') | tojson }};
+    const savedPercentages = {{ request.form.getlist('person_percentage[]') | tojson }};
+
+    function updatePercentageTotal() {
+        const inputs = percentageRows.querySelectorAll('input[name="person_percentage[]"]');
+        let total = 0;
+        inputs.forEach((input) => {
+            total += Number(input.value) || 0;
+        });
+        percentageTotal.textContent = `${total.toFixed(2).replace('.00', '')}%`;
+        percentageTotal.className = Math.abs(total - 100) < 0.01
+            ? "font-semibold text-green-300"
+            : "font-semibold text-pink-200";
+    }
+
+    function addPersonRow(name = "", percentage = "") {
+        const rowNumber = percentageRows.children.length + 1;
+        const row = document.createElement("div");
+        row.className = "grid gap-3 rounded-xl border border-white/10 bg-black/20 p-3 sm:grid-cols-[1fr_150px_auto]";
+        row.innerHTML = `
+            <input
+                type="text"
+                name="person_name[]"
+                value="${name}"
+                placeholder="Person ${rowNumber} name"
+                class="rounded-lg border border-gray-700 bg-black/40 px-3 py-2"
+            >
+            <div class="relative">
+                <input
+                    type="number"
+                    name="person_percentage[]"
+                    value="${percentage}"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    placeholder="0"
+                    class="w-full rounded-lg border border-gray-700 bg-black/40 px-3 py-2 pr-8"
+                >
+                <span class="pointer-events-none absolute right-3 top-2 text-gray-400">%</span>
+            </div>
+            <button
+                type="button"
+                class="remove-person rounded-lg border border-red-400/30 px-3 py-2 text-red-300 hover:bg-red-500/10"
+                aria-label="Remove person"
+            >
+                Remove
+            </button>
+        `;
+        percentageRows.appendChild(row);
+        row.querySelector('input[name="person_percentage[]"]').addEventListener("input", updatePercentageTotal);
+        row.querySelector(".remove-person").addEventListener("click", () => {
+            if (percentageRows.children.length > 1) {
+                row.remove();
+                updatePercentageTotal();
+            }
+        });
+        updatePercentageTotal();
+    }
+
+    function showSelectedMethod() {
+        const selected = document.querySelector('input[name="split_method"]:checked').value;
+        const peopleInput = equalFields.querySelector('input[name="people"]');
+        const percentageInputs = percentageRows.querySelectorAll('input[name="person_percentage[]"]');
+
+        if (selected === "percentage") {
+            equalFields.classList.add("hidden");
+            percentageFields.classList.remove("hidden");
+            peopleInput.required = false;
+            percentageInputs.forEach((input) => input.required = true);
+        } else {
+            equalFields.classList.remove("hidden");
+            percentageFields.classList.add("hidden");
+            peopleInput.required = true;
+            percentageInputs.forEach((input) => input.required = false);
+        }
+    }
+
+    document.querySelectorAll('input[name="split_method"]').forEach((radio) => {
+        radio.addEventListener("change", showSelectedMethod);
+    });
+
+    addPersonButton.addEventListener("click", () => addPersonRow());
+
+    resetButton.addEventListener("click", () => {
+        setTimeout(() => {
+            percentageRows.innerHTML = "";
+            addPersonRow();
+            addPersonRow();
+            showSelectedMethod();
+        }, 0);
+    });
+
+    if (savedNames.length) {
+        savedNames.forEach((name, index) => {
+            addPersonRow(name, savedPercentages[index] || "");
+        });
+    } else {
+        addPersonRow();
+        addPersonRow();
+    }
+
+    showSelectedMethod();
+</script>
+{% endblock %}
